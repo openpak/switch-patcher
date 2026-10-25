@@ -20,6 +20,10 @@ of truth; this file is the readable summary.
 - Build: the program is `switch-patcher.nro`; `make nsp` (workstation only) wraps it with
   hbstore-tools. CI builds and tests it, keeps it as the run artifact `switch-patcher-nro`
   for NSP packaging, and attaches the boot zip.
+- Patches: new set `exefs_patches/openpak_duck_game_nex_heap` (Duck Game, update v1.0.4, build id
+  `D5446193E5BC2E4C17F552597E14DDB7`): one instruction at 0xED9B18, `mov x8,#0xc800` to `mov x8,#0`,
+  so the NEX heap request fits the console. Owner-approved 2026-10-25. Installed and removed with
+  the other sets (Nintendo mode removes it).
 - Not yet released: also carries the Atmosphère 1.12.1 boot package move (b89871f, 1e071de).
 
 ## v0.3.27 — 2026-10-16 (hosts updater: new games arrive without the app)

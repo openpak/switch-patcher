@@ -75,6 +75,15 @@ if os.path.exists(dauth_ips):
     check(len(recs) == 1 and recs[0][0] == 0xfc8a4 and len(recs[0][1]) == 8,
           f"news_no_dauth record unexpected: {recs!r}")
 
+# 2b. Duck Game NEX heap patch (owner-approved 2026-10-25): one record, 'mov x8,#0' at IPS offset
+#     0xED9B18 (NSO text 0xED9A18; was 'mov x8,#0xc800' = 08 00 99 d2), build id of the v1.0.4 update.
+DUCK_BUILD = "D5446193E5BC2E4C17F552597E14DDB7" + "0" * 32
+duck_ips = os.path.join(ROOT, "romfs/patches/exefs_patches/openpak_duck_game_nex_heap", DUCK_BUILD + ".ips")
+check(os.path.exists(duck_ips), "duck_game_nex_heap IPS missing")
+if os.path.exists(duck_ips):
+    check(parse_ips(duck_ips) == [(0xED9B18, bytes.fromhex("080080d2"))],
+          "duck_game_nex_heap must be exactly 'mov x8,#0' at 0xED9B18")
+
 # 3. The store-trust FS change is compiled into OpenPak's fusee (romfs/system/fusee-1.12.1.bin,
 #    docs/install-trust.md). Atmosphere's fusee (1.11.2, 1.12.0) reads no /atmosphere/kip_patches, so no
 #    kip_patches payload may ship: it would look installed and do nothing.

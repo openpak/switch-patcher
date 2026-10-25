@@ -15,6 +15,7 @@
 //   exefs_patches/openpak_news_no_dauth          — News memory download skips the Nintendo edge token
 //   exefs_patches/openpak_news_list_no_dauth     — the News list and titles/topics fetches skip it too
 //   exefs_patches/openpak_ctr_key                — Crash Team Racing trusts OpenPak's Demonware key
+//   exefs_patches/openpak_duck_game_nex_heap     — Duck Game's NEX heap request fits the console
 //
 // The first two are community patches (upstream exefs_patches repositories); the News set
 // comes from news/tools/news-patch. The key and memory-download patches were proven on
@@ -23,6 +24,10 @@
 // The CTR key comes from servers/demonware tools/ctr-key-patch: the only game patch OpenPak
 // ships, a data-only swap of the key CTR checks its login replies against (its own code, so
 // no system-level fix reaches it).
+// The Duck Game patch (owner-approved 2026-10-25) is one instruction in the v1.0.4 update's main
+// (build id D5446193E5BC2E4C17F552597E14DDB7, title 0100750001C70000): at NSO text 0xED9A18
+// (IPS offset 0xED9B18) `mov x8,#0xc800` becomes `mov x8,#0`, so the NEX heap size it asks for
+// fits what the console can give. No server behaviour changes, only the heap-size constant.
 // All are keyed by build id: a console uses whichever file matches the build it is running,
 // so the whole set ships and the console picks. Without the browser one, no certificate we
 // install is ever consulted; without the News pair, News stays silent on OpenPak.
@@ -39,6 +44,8 @@ static const char *const patch_sets[][2] = {
      "/atmosphere/exefs_patches/openpak_news_list_no_dauth"},
     {"romfs:/patches/exefs_patches/openpak_ctr_key",
      "/atmosphere/exefs_patches/openpak_ctr_key"},
+    {"romfs:/patches/exefs_patches/openpak_duck_game_nex_heap",
+     "/atmosphere/exefs_patches/openpak_duck_game_nex_heap"},
 };
 static const int patch_set_count = (int)(sizeof(patch_sets) / sizeof(patch_sets[0]));
 

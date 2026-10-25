@@ -18,20 +18,23 @@
 //   exefs_patches/openpak_ctr_key                — Crash Team Racing trusts OpenPak's Demonware key
 //   exefs_patches/openpak_duck_game_nex_heap     — Duck Game's NEX heap request fits the console
 //   exefs_patches/openpak_d2r_trust              — Diablo II: Resurrected trusts OpenPak's CA on its game server
+//   exefs_patches/openpak_pvz_ca                 — PvZ: Battle for Neighborville trusts OpenPak's CA for EA
 //
 // The first two are community patches (upstream exefs_patches repositories); the News set
 // comes from news/tools/news-patch. The key and memory-download patches were proven on
 // hardware by the News probe (v0.19); the list patch skips the same edge-token helper before
 // the /v1/list/ and titles/<tid>/topics requests, which otherwise abort against OpenPak.
-// The game patches are the documented exceptions to "no game patches". Two are data-only:
-// the CTR key (servers/demonware tools/ctr-key-patch) swaps the key CTR checks its login
-// replies against, and the D2R trust (platforms/switch/games/battlenet tools/d2r-trust)
-// replaces the CA bundle the title's own OpenSSL trusts for its game server. Both checks live in
-// the game's own code, so no system-level fix reaches them.
+// The game patches are the documented exceptions to "no game patches", all data-only, each
+// for a check that lives in the game's own code where no system-level fix reaches: the CTR key
+// (servers/demonware tools/ctr-key-patch) swaps the key CTR checks its login replies against,
+// and the PvZ CA (platforms/switch/games/plants-vs-zombies tools/pvz-ca) swaps one CA of the
+// list the title's own DirtySDK TLS trusts (EA's GOS 2015 CA) for the OpenPak CA.
 // The Duck Game patch (owner-approved 2026-10-25) is one instruction in the v1.0.4 update's main
 // (build id D5446193E5BC2E4C17F552597E14DDB7, title 0100750001C70000): at NSO text 0xED9A18
 // (IPS offset 0xED9B18) `mov x8,#0xc800` becomes `mov x8,#0`, so the NEX heap size it asks for
 // fits what the console can give. No server behaviour changes, only the heap-size constant.
+// The D2R trust (platforms/switch/games/battlenet tools/d2r-trust) replaces the CA bundle the
+// title's own OpenSSL trusts for its game server.
 // All are keyed by build id: a console uses whichever file matches the build it is running,
 // so the whole set ships and the console picks. Without the browser one, no certificate we
 // install is ever consulted; without the News pair, News stays silent on OpenPak.
@@ -52,6 +55,8 @@ static const char *const patch_sets[][2] = {
      "/atmosphere/exefs_patches/openpak_duck_game_nex_heap"},
     {"romfs:/patches/exefs_patches/openpak_d2r_trust",
      "/atmosphere/exefs_patches/openpak_d2r_trust"},
+    {"romfs:/patches/exefs_patches/openpak_pvz_ca",
+     "/atmosphere/exefs_patches/openpak_pvz_ca"},
 };
 static const int patch_set_count = (int)(sizeof(patch_sets) / sizeof(patch_sets[0]));
 

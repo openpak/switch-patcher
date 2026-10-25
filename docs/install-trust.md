@@ -191,5 +191,5 @@ through a hekate test entry).
 The 22.5.0 FS offset comes from owner-local 22.5.0 binaries (`openpak-firmware-audit-22.5.0`),
 the 23.0.0 ones from the public FS patch database (above), and the Loader reasoning from the
 Atmosphère source (the ACID check reads the same in 1.11.2 and 1.12.0); workspace notes in
-`scratch/hbstore/trust/FINDINGS.md`. No Nintendo code is copied or shipped: the bundled files are
+`private notes`. No Nintendo code is copied or shipped: the bundled files are
 Atmosphère (GPL) builds, and the FS change is four bytes fusee writes at boot.

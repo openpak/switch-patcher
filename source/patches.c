@@ -30,10 +30,12 @@
 // (servers/demonware tools/ctr-key-patch) swaps the key CTR checks its login replies against,
 // and the PvZ CA (platforms/switch/games/plants-vs-zombies tools/pvz-ca) swaps one CA of the
 // list the title's own DirtySDK TLS trusts (EA's GOS 2015 CA) for the OpenPak CA.
-// The Duck Game patch (owner-approved 2026-10-25) is one instruction in the v1.0.4 update's main
-// (build id D5446193E5BC2E4C17F552597E14DDB7, title 0100750001C70000): at NSO text 0xED9A18
-// (IPS offset 0xED9B18) `mov x8,#0xc800` becomes `mov x8,#0`, so the NEX heap size it asks for
-// fits what the console can give. No server behaviour changes, only the heap-size constant.
+// The Duck Game patch (owner-approved 2026-10-25) is keyed to the v1.0.4 update's main (build id
+// D5446193E5BC2E4C17F552597E14DDB7, title 0100750001C70000). The game declares its NEX pool as
+// 0x10C800 bytes over a 0x100000 array, so a NEX thread stack lands on its zlib packet buffer and a
+// real console aborts on the first packet. NEX keeps its full pool; the patch moves the zlib output
+// buffer to just past it (20 instructions, switch-nex tools/duck-game-zlib-move). The first version
+// shrank the NEX pool instead and broke online play.
 // The Among Us patch (owner-approved 2026-10-24, reconfirmed 2026-10-25) re-aims the title's
 // own Hazel DTLS certificate pin (platforms/switch/games/among-us tools/dtls-trust): every online
 // game/auth connection opens a Hazel DTLS session whose certificate the game pins by exact match,

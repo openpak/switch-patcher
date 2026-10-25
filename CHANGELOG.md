@@ -3,6 +3,10 @@
 Generated from git history on 2026-09-15. `git log` stays the source
 of truth; this file is the readable summary.
 
+## v0.3.29
+
+- Duck Game patch replaced: NEX keeps its full pool and the zlib packet buffer moves past it (the v0.3.28 version shrank the pool and broke online play). Same set name, so Apply overwrites the old file.
+
 ## Unreleased — OpenPak Switch Patcher, NSP only
 
 - The app is now **OpenPak Switch Patcher**: the NACP name, the HOME menu, the title bar and

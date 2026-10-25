@@ -94,14 +94,18 @@ if os.path.exists(dauth_ips):
     check(len(recs) == 1 and recs[0][0] == 0xfc8a4 and len(recs[0][1]) == 8,
           f"news_no_dauth record unexpected: {recs!r}")
 
-# 2b. Duck Game NEX heap patch (owner-approved 2026-10-25): one record, 'mov x8,#0' at IPS offset
-#     0xED9B18 (NSO text 0xED9A18; was 'mov x8,#0xc800' = 08 00 99 d2), build id of the v1.0.4 update.
+# 2b. Duck Game patch (owner-approved 2026-10-25, revised the same day): NEX keeps its declared
+# 0x10C800 pool; the zlib packet output buffer moves to main+0x821F800 with half the capacity
+# (switch-nex tools/duck-game-zlib-move, commit 15afb8e). 20 instructions, all inside the zlib send/recv code.
 DUCK_BUILD = "D5446193E5BC2E4C17F552597E14DDB7" + "0" * 32
 duck_ips = os.path.join(ROOT, "romfs/patches/exefs_patches/openpak_duck_game_nex_heap", DUCK_BUILD + ".ips")
 check(os.path.exists(duck_ips), "duck_game_nex_heap IPS missing")
 if os.path.exists(duck_ips):
-    check(parse_ips(duck_ips) == [(0xED9B18, bytes.fromhex("080080d2"))],
-          "duck_game_nex_heap must be exactly 'mov x8,#0' at 0xED9B18")
+    recs = parse_ips(duck_ips)
+    check(all(0xEDA600 <= off <= 0xEDAF00 and len(b) == 4 for off, b in recs) and len(recs) == 20,
+          "duck_game_nex_heap must be the 20-instruction zlib-buffer move")
+    check((0xED9B18, bytes.fromhex("080080d2")) not in recs,
+          "duck_game_nex_heap must not shrink the NEX heap (that version broke online)")
 
 # 2c. Among Us DTLS trust patch (owner-approved 2026-10-24, reconfirmed 2026-10-25): an IPS32
 #     patch that re-pins the title's Hazel DTLS trust to OpenPak's certificate, and only it.

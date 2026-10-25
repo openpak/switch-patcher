@@ -24,6 +24,13 @@ of truth; this file is the readable summary.
   `D5446193E5BC2E4C17F552597E14DDB7`): one instruction at 0xED9B18, `mov x8,#0xc800` to `mov x8,#0`,
   so the NEX heap request fits the console. Owner-approved 2026-10-25. Installed and removed with
   the other sets (Nintendo mode removes it).
+- Patches: new set `exefs_patches/openpak_among_us_dtls` (Among Us, update v3997696, build id
+  `19A77A3165441065F8B2B43A54A4F2AB`): re-pins the title's Hazel DTLS trust to OpenPak's fixed DTLS
+  certificate, and only it. A routine in the main's `.text` code cave compares the presented
+  certificate's DER against OpenPak's 843-byte certificate (embedded in `.rodata`) and returns the
+  `Contains` result true only on an exact match; the reject branch and the signature check are
+  unchanged, so the original and any other certificate stay rejected. Owner-approved 2026-10-24,
+  reconfirmed 2026-10-25. Installed and removed with the other sets (Nintendo mode removes it).
 - Not yet released: also carries the Atmosphère 1.12.1 boot package move (b89871f, 1e071de).
 
 ## v0.3.27 — 2026-10-16 (hosts updater: new games arrive without the app)

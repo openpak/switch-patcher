@@ -91,6 +91,24 @@ the final update's build id (`1C689518406930512C13DDF4217E7676`); details and ev
 rejects real Demonware's replies, so it only makes sense once the Demonware hostnames point at
 OpenPak. Untested on hardware as of 2026-09-23.
 
+## Among Us DTLS pin (2026-10-24)
+
+Selecting **OpenPak** also installs `exefs_patches/openpak_among_us_dtls`. After the matchmaker
+names a game server, every online game/auth path opens a Hazel DTLS session to it, and the client
+accepts only the certificate its build pins by exact match (`serverCertificates.Contains`). The
+pinned certificate is self-signed, so nothing without its private key can complete the handshake,
+and neither `nn::ssl` nor the console certificate store is consulted. This data-only patch keeps
+the exact-match pin but points it at OpenPak's own fixed DTLS certificate, and only it: a small
+routine in the main's `.text` code cave fetches the presented certificate's DER and returns the
+`Contains` result true only for an exact byte match against OpenPak's 843-byte certificate
+(embedded read-only in `.rodata`); the reject branch and the handshake's signature check are
+untouched, so the original certificate and any other certificate stay rejected. It is one of the
+documented game-patch exceptions (owner-approved 2026-10-24, reconfirmed 2026-10-25), keyed to the
+v3997696 update's build id (`19A77A3165441065F8B2B43A54A4F2AB`). The file comes from
+`platforms/switch/games/among-us/tools/dtls-trust`; regenerate it there when the DTLS certificate
+changes. Selecting Nintendo removes it. A patched client trusts only OpenPak's game server, so it
+only makes sense with the `.among.us` family on OpenPak. Untested on hardware as of 2026-10-25.
+
 ## Plants vs. Zombies: Battle for Neighborville CA (2026-10-24)
 
 Selecting **OpenPak** also installs `exefs_patches/openpak_pvz_ca`. The title does all its EA

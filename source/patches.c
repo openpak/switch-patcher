@@ -17,6 +17,7 @@
 //   exefs_patches/openpak_news_list_no_dauth     — the News list and titles/topics fetches skip it too
 //   exefs_patches/openpak_ctr_key                — Crash Team Racing trusts OpenPak's Demonware key
 //   exefs_patches/openpak_duck_game_nex_heap     — Duck Game's NEX heap request fits the console
+//   exefs_patches/openpak_among_us_dtls          — Among Us pins its Hazel DTLS trust to OpenPak's certificate
 //   exefs_patches/openpak_d2r_trust              — Diablo II: Resurrected trusts OpenPak's CA on its game server
 //   exefs_patches/openpak_pvz_ca                 — PvZ: Battle for Neighborville trusts OpenPak's CA for EA
 //
@@ -33,6 +34,12 @@
 // (build id D5446193E5BC2E4C17F552597E14DDB7, title 0100750001C70000): at NSO text 0xED9A18
 // (IPS offset 0xED9B18) `mov x8,#0xc800` becomes `mov x8,#0`, so the NEX heap size it asks for
 // fits what the console can give. No server behaviour changes, only the heap-size constant.
+// The Among Us patch (owner-approved 2026-10-24, reconfirmed 2026-10-25) re-aims the title's
+// own Hazel DTLS certificate pin (platforms/switch/games/among-us tools/dtls-trust): every online
+// game/auth connection opens a Hazel DTLS session whose certificate the game pins by exact match,
+// which no nn::ssl or CA-store change reaches. The patch keeps the exact-match pin but points it
+// at OpenPak's fixed DTLS certificate (and only it); the original and any other certificate stay
+// rejected. Update v3997696, build id 19A77A3165441065F8B2B43A54A4F2AB.
 // The D2R trust (platforms/switch/games/battlenet tools/d2r-trust) replaces the CA bundle the
 // title's own OpenSSL trusts for its game server.
 // All are keyed by build id: a console uses whichever file matches the build it is running,
@@ -53,6 +60,8 @@ static const char *const patch_sets[][2] = {
      "/atmosphere/exefs_patches/openpak_ctr_key"},
     {"romfs:/patches/exefs_patches/openpak_duck_game_nex_heap",
      "/atmosphere/exefs_patches/openpak_duck_game_nex_heap"},
+    {"romfs:/patches/exefs_patches/openpak_among_us_dtls",
+     "/atmosphere/exefs_patches/openpak_among_us_dtls"},
     {"romfs:/patches/exefs_patches/openpak_d2r_trust",
      "/atmosphere/exefs_patches/openpak_d2r_trust"},
     {"romfs:/patches/exefs_patches/openpak_pvz_ca",

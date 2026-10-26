@@ -22,7 +22,8 @@ def local(p):
 parser=argparse.ArgumentParser()
 parser.add_argument('--package3',type=Path,
                     default=local(scratch/'ams-1.12.1/sd/atmosphere/package3'))
-parser.add_argument('--store-package3',type=Path,default=local(scratch/'hbstore/pkg3/package3-openpak-store-dnsfix'))
+# No default: the package that booted (package3-openpak-store-dnsfix) predates the bsd_mitm ip-redirect KIP; pass --store-package3 once a build with it has booted.
+parser.add_argument('--store-package3',type=Path,default=None)
 # Store packages earlier releases wrote, both booted on hardware: 0.3.15-0.3.17 (1.11.2) and
 # 0.3.18-0.3.19 (1.12.0 without the dns.mitm fix). An upgrade replaces either.
 OLD_STORE={'4e2ac49bb8547c8d17af1ebcc092d60a3c4932a7c31ee2e2bd06113e619530e2':scratch/'hbstore/pkg3/package3-openpak-store',
@@ -32,8 +33,8 @@ a=parser.parse_args()
 # build before store trust wrote it, and ams_mitm + Loader + fusee. The 1.11.2 store package of the
 # same build booted on hardware and launched a store title (2026-10-04). This one adds upstream's
 # firmware-23 dns.mitm fix with OpenPak's correction (tools/atmosphere-dns-*.patch); booted on 23.0.1 hardware 2026-10-07.
-PREVIOUS_SHA='9e39d8a9704a1c5e1e67ec16514bf6ce1f0929e020c1cca59bc11b398fb124ad'
-STORE_SHA='c1fe81136e3def1f989a688296362260dd05f1408bc4a35b6cb4e75f17d46265'
+PREVIOUS_SHA='f958555e23551afdfec0412fa364d990282e6c0a9fe421ebfa2a4cebaccb4e8f'
+STORE_SHA='e008784e6960390fdee3ad27e34cc1ce91305fa161c0bf3cce5250f3d9673ae8'
 with tempfile.TemporaryDirectory(prefix='openpak-system-test-') as directory:
     tmp=Path(directory)
     stub=tmp/'root.c';stub.write_text('const char *openpak_root = "";\n')

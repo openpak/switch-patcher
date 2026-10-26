@@ -37,6 +37,15 @@ of truth; this file is the readable summary.
   reconfirmed 2026-10-25. Installed and removed with the other sets (Nintendo mode removes it).
 - Not yet released: also carries the Atmosphère 1.12.1 boot package move (b89871f, 1e071de).
 
+## v0.3.30 — 2026-10-26 (bsd:u IP redirects)
+
+- ams_mitm gains a `bsd:u` mitm: for the programs listed in `/atmosphere/config/openpak/ip_redirects.txt`
+  (written by openpak-fetchd from the signed ceiling's `ip_redirects`), TCP Connect and UDP SendTo to a
+  listed IPv4 address:port go to the rule's target. Every other command and program is untouched.
+- openpak-fetchd rebuilt with the ip redirects writer.
+- The system-module test pins the package hashes of this KIP; it no longer compares against the
+  older hardware-booted package.
+
 ## v0.3.27 — 2026-10-16 (hosts updater: new games arrive without the app)
 
 - system: selecting OpenPak now also installs `openpak-fetchd`, a small boot2 sysmodule

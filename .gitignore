@@ -4,3 +4,4 @@ build/
 *.nacp
 *.map
 .tmp/
+next-session.md

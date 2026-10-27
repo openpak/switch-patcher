@@ -16,7 +16,7 @@ import subprocess
 import tempfile
 
 repo=Path(__file__).resolve().parents[1]
-scratch=repo.parents[1]/'scratch'
+scratch=repo.parents[3]/'scratch'
 def local(p):
     return p if p.is_file() else None
 parser=argparse.ArgumentParser()
@@ -27,7 +27,9 @@ parser.add_argument('--store-package3',type=Path,default=None)
 # Store packages earlier releases wrote, both booted on hardware: 0.3.15-0.3.17 (1.11.2) and
 # 0.3.18-0.3.19 (1.12.0 without the dns.mitm fix). An upgrade replaces either.
 OLD_STORE={'4e2ac49bb8547c8d17af1ebcc092d60a3c4932a7c31ee2e2bd06113e619530e2':scratch/'hbstore/pkg3/package3-openpak-store',
-           'eff03265fe175feb424c0d7e42726b13f5ef8eb93824e91ce1556f69175815ca':scratch/'hbstore/pkg3/package3-openpak-store-1.12.0'}
+           'eff03265fe175feb424c0d7e42726b13f5ef8eb93824e91ce1556f69175815ca':scratch/'hbstore/pkg3/package3-openpak-store-1.12.0',
+           # an earlier 1.12.1 build, off the console 2026-10-27: recognised by structure, not by hash
+           'c1fe81136e3def1f989a688296362260dd05f1408bc4a35b6cb4e75f17d46265':scratch/'hbstore/pkg3/package3-openpak-1.12.1-earlier'}
 a=parser.parse_args()
 # What the builder makes from the official 1.12.0 package (sha 3cc9d6ca…): ams_mitm alone, as every
 # build before store trust wrote it, and ams_mitm + Loader + fusee. The 1.11.2 store package of the

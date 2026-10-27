@@ -78,11 +78,13 @@ static bool same_kip(const uint8_t *old,const uint8_t *k,size_t n) {
     return n>=0x100 && n<=0x100000 && kip_size(k)==n && !memcmp(old,k,0x20) && !memcmp(old+0x80,k+0x80,0x80);
 }
 
-bool openpak_package_build(uint8_t *p, size_t size, const uint8_t *kip, size_t n,
-                           const uint8_t *loader, size_t ln, const uint8_t *fusee, size_t fn) {
+// stock: the official package, matched by hash. Not stock: an older OpenPak package, whose layout
+// is still checked in full below; the caller compares the result with what a build makes.
+static bool package_build(uint8_t *p, size_t size, const uint8_t *kip, size_t n,
+                          const uint8_t *loader, size_t ln, const uint8_t *fusee, size_t fn, bool stock) {
     // Exact release match prevents altering an unsupported or independently modified boot image.
-    if (size!=PACKAGE_SIZE || !fingerprint(p,size,
-        "94c2e6f7e438571c51964b2d730c6cc7ab5557e19b2fd0315878c004dd8d56a6")) return false;
+    if (size!=PACKAGE_SIZE || (stock && !fingerprint(p,size,
+        "94c2e6f7e438571c51964b2d730c6cc7ab5557e19b2fd0315878c004dd8d56a6"))) return false;
     if (n<0x100 || n>0x100000 || memcmp(kip,"KIP1ams.mitm",12)) return false;
     if (!loader!=!fusee) return false;
     if (loader && (ln<0x100 || memcmp(loader,"KIP1Loader\0\0\0\0\0\0",16) || memcmp(loader+0x10,LOADER_ID,8))) return false;
@@ -127,6 +129,11 @@ bool openpak_package_build(uint8_t *p, size_t size, const uint8_t *kip, size_t n
         if (fusee) { memcpy(p+FUSEE_AT,fusee,fn); memset(p+FUSEE_AT+fn,0,FUSEE_MAX-fn); put32(p+fh+4,fn); }
     }
     free(region); return ok;
+}
+
+bool openpak_package_build(uint8_t *p, size_t size, const uint8_t *kip, size_t n,
+                           const uint8_t *loader, size_t ln, const uint8_t *fusee, size_t fn) {
+    return package_build(p,size,kip,n,loader,ln,fusee,fn,true);
 }
 
 bool openpak_store_replace(const uint8_t *s, size_t size, const uint8_t *ca,
@@ -536,6 +543,16 @@ done:
     free(patches);free(new_patches);free(boot);free(x);
 }
 
+// A package an earlier OpenPak build wrote from this same official package: rebuilding it with
+// today's modules gives exactly today's package, so only ams_mitm, Loader and fusee differ.
+// No hash list to extend with every release.
+static bool package_is_ours(const char *file,const uint8_t *kip,size_t kn,const uint8_t *loader,size_t ln,
+                            const uint8_t *fusee,size_t fn,const uint8_t *want,size_t wn) {
+    size_t n=0;uint8_t *b=read_file(file,&n,false);if(!b)return false;
+    bool ok=n==wn && package_build(b,n,kip,kn,loader,ln,fusee,fn,false) && !memcmp(b,want,wn);
+    free(b);return ok;
+}
+
 // The packages earlier builds wrote. They are OpenPak's own, so a rebuild may replace them.
 // 2: from Atmosphere 1.11.2, ams_mitm alone (0.3.1-0.3.14) or with store trust (0.3.15-0.3.17).
 // 1: from Atmosphere 1.12.0: without the firmware-23 dns.mitm fix (0.3.18-0.3.19) or with OpenPak's own (0.3.20-0.3.27).
@@ -579,7 +596,7 @@ bool openpak_system_install(char *err,int errlen) {
        && !openpak_store_file_is_ours())goto done;
     failure="OpenPak boot package changed; existing file preserved";
     if(exists(OPENPAK_PACKAGE) && !same_file(OPENPAK_PACKAGE,base,n) && !same_file(OPENPAK_PACKAGE,previous,n) &&
-       !openpak_package_outdated())goto done;
+       !openpak_package_outdated() && !package_is_ours(OPENPAK_PACKAGE,kip,kn,loader,ln,fusee,fn,base,n))goto done;
     failure="Could not read the system certificates";
     source=system_store(&sn);ca=read_file(ASSET "ca.der",&cn,true);
     if(!source||!ca)goto done;

@@ -9,6 +9,9 @@ of truth; this file is the readable summary.
 
 ## Unreleased — OpenPak Switch Patcher, NSP only
 
+- Fixed "OpenPak boot package changed; existing file preserved" after every update: an older OpenPak
+  `package3-openpak` is now recognised by rebuilding it with the current modules, not by a hash list.
+
 - The app is now **OpenPak Switch Patcher**: the NACP name, the HOME menu, the title bar and
   the eShop listing. Repository `openpak/switch-patcher` (was `openpak/openpak-nro`).
 - NSP only. Releases no longer carry `openpak.nro` or `openpak-console.nro`; the text-mode

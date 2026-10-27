@@ -28,6 +28,12 @@ of truth; this file is the readable summary.
   `D5446193E5BC2E4C17F552597E14DDB7`): one instruction at 0xED9B18, `mov x8,#0xc800` to `mov x8,#0`,
   so the NEX heap request fits the console. Owner-approved 2026-10-25. Installed and removed with
   the other sets (Nintendo mode removes it).
+- Patches: new set `exefs_patches/openpak_astro_key` (Astroneer, update v2293760 build
+  `35DD08251AEDF2D208E594A0390157E9` and base v0 build `B707145B9C35A12A1D493F479B7F8538`):
+  two read-only data edits — the wide ini name `GameServerAccessKey` becomes `XameServerAccessKey`
+  so the client proceeds with an empty NEX key, and the login SNI format becomes the fixed
+  `ga57-lp1.s.n.srv.nintendo.net`. The production key lives only in the AES-encrypted pak.
+  Owner-approved 2026-10-27. Installed and removed with the other sets.
 - Patches: new set `exefs_patches/openpak_among_us_dtls` (Among Us, update v3997696, build id
   `19A77A3165441065F8B2B43A54A4F2AB`): re-pins the title's Hazel DTLS trust to OpenPak's fixed DTLS
   certificate, and only it. A routine in the main's `.text` code cave compares the presented

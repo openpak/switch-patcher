@@ -20,6 +20,7 @@
 //   exefs_patches/openpak_among_us_dtls          — Among Us pins its Hazel DTLS trust to OpenPak's certificate
 //   exefs_patches/openpak_d2r_trust              — Diablo II: Resurrected trusts OpenPak's CA on its game server
 //   exefs_patches/openpak_pvz_ca                 — PvZ: Battle for Neighborville trusts OpenPak's CA for EA
+//   exefs_patches/openpak_astro_key              — Astroneer uses an empty NEX key and a fixed routing SNI
 //
 // The first two are community patches (upstream exefs_patches repositories); the News set
 // comes from news/tools/news-patch. The key and memory-download patches were proven on
@@ -44,6 +45,15 @@
 // rejected. Update v3997696, build id 19A77A3165441065F8B2B43A54A4F2AB.
 // The D2R trust (platforms/switch/games/battlenet tools/d2r-trust) replaces the CA bundle the
 // title's own OpenSSL trusts for its game server.
+// The Astroneer key (owner-approved 2026-10-27, platforms/switch/games/astroneer
+// tools/astro-key) is two read-only data edits: the wide ini name GameServerAccessKey
+// becomes XameServerAccessKey so the FConfig read misses and the client proceeds with
+// an empty NEX key (its own guarded empty path), and the login SNI format becomes the
+// fixed ga57-lp1.s.n.srv.nintendo.net. The key lives only in the AES-encrypted pak, so
+// no server-side change can learn it; the .text has no code cave (max zero run 15
+// bytes), which is why the patch is data-only. Covered builds: update v2293760 build
+// 35DD08251AEDF2D208E594A0390157E9 (the build consoles run) and base v0 build
+// B707145B9C35A12A1D493F479B7F8538.
 // All are keyed by build id: a console uses whichever file matches the build it is running,
 // so the whole set ships and the console picks. Without the browser one, no certificate we
 // install is ever consulted; without the News pair, News stays silent on OpenPak.
@@ -68,6 +78,8 @@ static const char *const patch_sets[][2] = {
      "/atmosphere/exefs_patches/openpak_d2r_trust"},
     {"romfs:/patches/exefs_patches/openpak_pvz_ca",
      "/atmosphere/exefs_patches/openpak_pvz_ca"},
+    {"romfs:/patches/exefs_patches/openpak_astro_key",
+     "/atmosphere/exefs_patches/openpak_astro_key"},
 };
 static const int patch_set_count = (int)(sizeof(patch_sets) / sizeof(patch_sets[0]));
 

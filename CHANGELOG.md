@@ -34,6 +34,11 @@ of truth; this file is the readable summary.
   so the client proceeds with an empty NEX key, and the login SNI format becomes the fixed
   `ga57-lp1.s.n.srv.nintendo.net`. The production key lives only in the AES-encrypted pak.
   Owner-approved 2026-10-27. Installed and removed with the other sets.
+- Patches: `exefs_patches/openpak_astro_key` superseded the same day it shipped (v0.3.31):
+  the Astroneer paks turned out plaintext and the production pair (`2EE4D000`/`18dbde6c`)
+  serves unpatched consoles, so the set is gone from the installer and both install and
+  remove delete its directory. Consoles that fetched v0.3.31 shed the empty-key patch on
+  update.
 - Patches: new set `exefs_patches/openpak_among_us_dtls` (Among Us, update v3997696, build id
   `19A77A3165441065F8B2B43A54A4F2AB`): re-pins the title's Hazel DTLS trust to OpenPak's fixed DTLS
   certificate, and only it. A routine in the main's `.text` code cave compares the presented

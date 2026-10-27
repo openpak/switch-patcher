@@ -20,7 +20,8 @@
 //   exefs_patches/openpak_among_us_dtls          — Among Us pins its Hazel DTLS trust to OpenPak's certificate
 //   exefs_patches/openpak_d2r_trust              — Diablo II: Resurrected trusts OpenPak's CA on its game server
 //   exefs_patches/openpak_pvz_ca                 — PvZ: Battle for Neighborville trusts OpenPak's CA for EA
-//   exefs_patches/openpak_astro_key              — Astroneer uses an empty NEX key and a fixed routing SNI
+//   (openpak_astro_key was removed again: the pak read recovered Astroneer's
+//   production pair, so unpatched consoles work; remove_superseded deletes it.)
 //
 // The first two are community patches (upstream exefs_patches repositories); the News set
 // comes from news/tools/news-patch. The key and memory-download patches were proven on
@@ -45,15 +46,13 @@
 // rejected. Update v3997696, build id 19A77A3165441065F8B2B43A54A4F2AB.
 // The D2R trust (platforms/switch/games/battlenet tools/d2r-trust) replaces the CA bundle the
 // title's own OpenSSL trusts for its game server.
-// The Astroneer key (owner-approved 2026-10-27, platforms/switch/games/astroneer
-// tools/astro-key) is two read-only data edits: the wide ini name GameServerAccessKey
-// becomes XameServerAccessKey so the FConfig read misses and the client proceeds with
-// an empty NEX key (its own guarded empty path), and the login SNI format becomes the
-// fixed ga57-lp1.s.n.srv.nintendo.net. The key lives only in the AES-encrypted pak, so
-// no server-side change can learn it; the .text has no code cave (max zero run 15
-// bytes), which is why the patch is data-only. Covered builds: update v2293760 build
-// 35DD08251AEDF2D208E594A0390157E9 (the build consoles run) and base v0 build
-// B707145B9C35A12A1D493F479B7F8538.
+// The Astroneer key (owner-approved 2026-10-27, shipped once in v0.3.31) is
+// superseded the same day: the paks turned out plaintext and the production
+// pair (2EE4D000/18dbde6c) serves unpatched consoles, so the empty-key patch
+// must not linger to fight the real key. The set is gone from patch_sets;
+// remove_superseded deletes its directory (update v2293760 build
+// 35DD08251AEDF2D208E594A0390157E9 and base v0 build
+// B707145B9C35A12A1D493F479B7F8538).
 // All are keyed by build id: a console uses whichever file matches the build it is running,
 // so the whole set ships and the console picks. Without the browser one, no certificate we
 // install is ever consulted; without the News pair, News stays silent on OpenPak.
@@ -78,8 +77,6 @@ static const char *const patch_sets[][2] = {
      "/atmosphere/exefs_patches/openpak_d2r_trust"},
     {"romfs:/patches/exefs_patches/openpak_pvz_ca",
      "/atmosphere/exefs_patches/openpak_pvz_ca"},
-    {"romfs:/patches/exefs_patches/openpak_astro_key",
-     "/atmosphere/exefs_patches/openpak_astro_key"},
 };
 static const int patch_set_count = (int)(sizeof(patch_sets) / sizeof(patch_sets[0]));
 
@@ -91,16 +88,31 @@ static const char *const superseded_files[] = {
     "4DE22400C997ED2373F0643E9FE9B079DB0E8D72.ips",
     "DB0507F36B84200AC05F75D76ED5026F903E6C9.ips",
 };
+// Retired Astro key patch (v0.3.31 only): the production pair serves unpatched
+// consoles, so a stale copy must not keep patching with the empty key.
+static const char *const superseded_dir_astro = "/atmosphere/exefs_patches/openpak_astro_key";
+static const char *const superseded_files_astro[] = {
+    "35DD08251AEDF2D208E594A0390157E9.ips",
+    "B707145B9C35A12A1D493F479B7F8538.ips",
+};
 
-static int remove_superseded(void) {
+static int remove_superseded_one(const char *dir, const char *const *files, size_t n) {
     int removed = 0;
     char path[512];
-    for (size_t i = 0; i < sizeof(superseded_files) / sizeof(superseded_files[0]); i++) {
-        snprintf(path, sizeof(path), "%s%s/%s", openpak_root, superseded_dir, superseded_files[i]);
+    for (size_t i = 0; i < n; i++) {
+        snprintf(path, sizeof(path), "%s%s/%s", openpak_root, dir, files[i]);
         if (remove(path) == 0) removed++;
     }
-    snprintf(path, sizeof(path), "%s%s", openpak_root, superseded_dir);
+    snprintf(path, sizeof(path), "%s%s", openpak_root, dir);
     rmdir(path); // only succeeds when nothing else is in it
+    return removed;
+}
+
+static int remove_superseded(void) {
+    int removed = remove_superseded_one(superseded_dir, superseded_files,
+        sizeof(superseded_files) / sizeof(superseded_files[0]));
+    removed += remove_superseded_one(superseded_dir_astro, superseded_files_astro,
+        sizeof(superseded_files_astro) / sizeof(superseded_files_astro[0]));
     return removed;
 }
 

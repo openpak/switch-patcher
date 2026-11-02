@@ -141,7 +141,7 @@ the official 1.12.1 `package3` and writes:
 The player boots that entry once, installs the NSP with any NSP installer (the install itself
 needs no trust: ncm stores the content, only FS and Loader check it at start), starts the app
 and selects OpenPak, which points the standard hekate entries at the package. Without the zip,
-stock Atmosphère installs the NSP but cannot start it. Not yet tried on hardware.
+stock Atmosphère installs the NSP but cannot start it.
 
 ## Companion: openpak-fetchd, a boot2 hosts updater
 
@@ -181,10 +181,6 @@ Selecting **Nintendo** points hekate back at the official `package3`; the inacti
 through OpenPak's entry, edit `bootloader/hekate_ipl.ini` in a PC card reader and change
 `pkg3=atmosphere/package3-openpak` back to `pkg3=atmosphere/package3` (OpenPak's backup of the
 original is `/switch/openpak/system/boot.original`). Nothing here changes the NAND.
-
-Not yet seen on hardware: a sysMMC boot through this package, and the upgrade from an
-`ams_mitm`-only `package3-openpak` performed by the NRO itself (the package was put in place
-through a hekate test entry).
 
 ## Provenance
 

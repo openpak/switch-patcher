@@ -30,7 +30,6 @@ accepted the rest of the setup still applies.
 A third News patch, `openpak_news_list_no_dauth`, joins the pair above: it lets the module's
 list and titles/topics fetches proceed without a Nintendo edge token, the same way the
 existing patch does for the memory download. All three are keyed by BCAT build id.
-Untested on hardware as of 2026-09-23.
 
 ## Crash Team Racing key (2026-09-23)
 
@@ -41,7 +40,7 @@ private key signs on `servers/demonware`). It is one of the documented game-patc
 the final update's build id (`1C689518406930512C13DDF4217E7676`); details and evidence in
 `servers/demonware/tools/ctr-key-patch`. Selecting Nintendo removes it. A patched CTR
 rejects real Demonware's replies, so it only makes sense once the Demonware hostnames point at
-OpenPak. Untested on hardware as of 2026-09-23.
+OpenPak.
 
 ## Among Us DTLS pin (2026-10-24)
 
@@ -59,7 +58,7 @@ documented game-patch exceptions (owner-approved 2026-10-24, reconfirmed 2026-10
 v3997696 update's build id (`19A77A3165441065F8B2B43A54A4F2AB`). The file comes from
 `platforms/switch/games/among-us/tools/dtls-trust`; regenerate it there when the DTLS certificate
 changes. Selecting Nintendo removes it. A patched client trusts only OpenPak's game server, so it
-only makes sense with the `.among.us` family on OpenPak. Untested on hardware as of 2026-10-25.
+only makes sense with the `.among.us` family on OpenPak.
 
 ## Plants vs. Zombies: Battle for Neighborville CA (2026-10-24)
 
@@ -72,8 +71,7 @@ Authority", with the OpenPak CA's name and public key, and leaves every instruct
 It is keyed to update v1.0.4's build id (`5AD255D6667B6EB5BDCF74B74BCD2602`); the file comes
 from `platforms/switch/games/plants-vs-zombies/tools/pvz-ca`, regenerate it there when the CA
 changes. Selecting Nintendo removes it. A patched game no longer trusts EA's GOS 2015
-certificates, so it only makes sense with the `.ea.com` family on OpenPak. Untested on hardware
-as of 2026-10-24.
+certificates, so it only makes sense with the `.ea.com` family on OpenPak.
 
 ## Diablo II: Resurrected (2026-09-20)
 
@@ -100,7 +98,7 @@ OpenPak's CA and leaves every instruction as shipped. It covers two build ids: t
 `DB0507F36B84200AC05F75D76ED5026F903E6C9`. The files come from
 `platforms/switch/games/battlenet/tools/d2r-trust`; regenerate both there when the CA changes.
 Installing also deletes the hand-copied `exefs_patches/openpak-d2r/` files from before this
-release. Selecting Nintendo removes both. Untested on hardware through this app as of 2026-10-24.
+release. Selecting Nintendo removes both.
 
 ## Failure reports
 

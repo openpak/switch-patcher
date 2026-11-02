@@ -234,3 +234,21 @@ store-trust package is byte for byte the one proven on hardware (add
 `--store-package3 <package3-openpak-store>` to compare against that file too). Those inputs
 are local and not distributed in this repository; `make test` picks them up from the
 workspace's `private notes` when present and skips those tests otherwise.
+
+## Distribution
+
+Switch Patcher is a HOME menu title (`01FE000000000000`, shown as **OpenPak Switch Patcher**),
+shipped as an NSP only and updated through the OpenPak eShop. Releases carry no NRO: the
+`openpak.nro` / `openpak-console.nro` builds and their GitHub self-updater ended with v0.3.27, and
+an NRO install from those releases no longer updates itself. Built on libnx + SDL2 + SDL2_ttf; it
+ships no font and uses the console's shared font.
+
+## Gotchas
+
+- Do not install the NSP without the boot zip: on stock Atmosphere the install goes through but
+  the title cannot start (FS rejects the NCA header signature, Loader the ACID). A console whose
+  sigpatches also patch Loader's ACID check (sys-patch does) may start it anyway; that is not a
+  supported path. `tools/build-boot-zip.py` builds the zip (no keys needed; CI attaches it).
+- Version 0.3.0 tried to replace the active package and failed on this console; 0.3.1 replaced
+  that activation method. Recovery copies left on SD by 0.3.0 are not used to select the boot
+  package.

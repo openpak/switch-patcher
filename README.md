@@ -38,13 +38,12 @@ See [deploy](docs/deploy.md).
 ## Docs
 
 - [Protocol](docs/protocol.md)
-- [Evidence](docs/evidence.md)
 - [Deploy](docs/deploy.md)
-- [Notes](docs/notes.md)
 - [Install trust](docs/install-trust.md)
 - [Researched hosts](docs/researched-hosts.md)
 - [Save Data Cloud](docs/save-data-cloud.md)
-- [Docs index](docs/README.md)
+
+PRDs: openpak/prds (private)
 
 ## Licence
 

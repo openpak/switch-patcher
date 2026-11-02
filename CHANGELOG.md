@@ -9,6 +9,9 @@ of truth; this file is the readable summary.
 
 ## Unreleased — OpenPak Switch Patcher, NSP only
 
+- tools: the two Atmosphère dns.mitm patches are gone; 1.12.1 ships the firmware-23 fix upstream and the
+  update-probe experiment now builds against 1.12.1 like the shipped modules.
+
 - Fixed "OpenPak boot package changed; existing file preserved" after every update: an older OpenPak
   `package3-openpak` is now recognised by rebuilding it with the current modules, not by a hash list.
 

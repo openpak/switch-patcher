@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# EXPERIMENT, not shipped: builds ams_mitm 1.12.0 with the four shipped patches plus
+# EXPERIMENT, not shipped: builds ams_mitm 1.12.1 with the two shipped patches plus
 # tools/atmosphere-update-probe.patch (a read-only content probe: ncm, lr and fs reads of the OpenPak title, no network,
 # logging to /atmosphere/openpak-probe.log). Output goes to scratch/probe/out, never to romfs/.
 #   TMPDIR=<workspace>/scratch/tmp flock /tmp/openpak-build.lock bash tools/build-update-probe.sh
 # Toolchain checks are the same as build-system-module.sh (devkitA64 GCC 16.1, libnx with pgl shell events).
 repo_dir=$(cd -- "$(dirname -- "$0")/.." && pwd)
 out_dir=${PROBE_OUT:-$repo_dir/../../scratch/probe/out}
-ams=1.12.0
+ams=1.12.1   # 1.12.1 carries the firmware-23 dns.mitm fix upstream; no dns patches needed
 # PROBE_BUILD_DIR=<dir> keeps the tree (libstratosphere takes ~35 min) and only re-applies the probe patch.
 if [ -n "${PROBE_BUILD_DIR:-}" ]; then
     build_dir=$PROBE_BUILD_DIR; mkdir -p "$build_dir"
@@ -21,10 +21,9 @@ if [ -d "$build_dir/source" ]; then
 else
     git clone --depth 1 --branch "$ams" https://github.com/Atmosphere-NX/Atmosphere.git "$build_dir/source"
     git -C "$build_dir/source" apply "$repo_dir/tools/atmosphere-ssl.patch" "$repo_dir/tools/atmosphere-store-trust.patch" \
-        "$repo_dir/tools/atmosphere-dns-f5cd912.patch" "$repo_dir/tools/atmosphere-dns-openpak.patch" \
         "$repo_dir/tools/atmosphere-update-probe.patch"
 fi
-pin=(ATMOSPHERE_GIT_BRANCH= ATMOSPHERE_GIT_REVISION=-28d6a2e-dirty ATMOSPHERE_GIT_HASH=28d6a2e11f264007)
+pin=(ATMOSPHERE_GIT_BRANCH= ATMOSPHERE_GIT_REVISION=-6b0c077-dirty ATMOSPHERE_GIT_HASH=6b0c077b4c608a3a)
 export DEVKITPRO=${DEVKITPRO:-/opt/devkitpro}
 export DEVKITARM=$DEVKITPRO/devkitARM PATH=$DEVKITPRO/tools/bin:$PATH
 "$DEVKITPRO/devkitA64/bin/aarch64-none-elf-gcc" --version | head -n1 | grep -q " 16.1" || { echo "need devkitA64 GCC 16.1" >&2; exit 1; }

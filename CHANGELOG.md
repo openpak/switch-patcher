@@ -3,14 +3,17 @@
 Generated from git history on 2026-09-15. `git log` stays the source
 of truth; this file is the readable summary.
 
+## v0.3.34 — 2026-11-04
+
+- tools: the two Atmosphère dns.mitm patches are gone; 1.12.1 ships the firmware-23 fix upstream and the
+  update-probe experiment now builds against 1.12.1 like the shipped modules.
+- docs: README, protocol and deploy only; PRDs moved to openpak/prds; time-stamped status notes dropped
+
 ## v0.3.29
 
 - Duck Game patch replaced: NEX keeps its full pool and the zlib packet buffer moves past it (the v0.3.28 version shrank the pool and broke online play). Same set name, so Apply overwrites the old file.
 
 ## Unreleased — OpenPak Switch Patcher, NSP only
-
-- tools: the two Atmosphère dns.mitm patches are gone; 1.12.1 ships the firmware-23 fix upstream and the
-  update-probe experiment now builds against 1.12.1 like the shipped modules.
 
 - Fixed "OpenPak boot package changed; existing file preserved" after every update: an older OpenPak
   `package3-openpak` is now recognised by rebuilding it with the current modules, not by a hash list.
